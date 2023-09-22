@@ -10,6 +10,10 @@ function getTimeZone(): string {
   return Intl.DateTimeFormat().resolvedOptions().timeZone;
 }
 
+function getOnlineStatus(): string {
+  return navigator.onLine ? "Online" : "Offline";
+}
+
 function getLanguage(): string {
   return navigator.language;
 }
@@ -51,7 +55,7 @@ function computeHashBuffer(buffer: ArrayBuffer): string {
   return hash.toString(16);
 }
 
-async function computeSHA256(input: string): Promise<string> {
+async function computeSha256(input: string): Promise<string> {
   const utf8 = new TextEncoder().encode(input);
   const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
@@ -139,10 +143,25 @@ async function getCanvasFingerprint(): Promise<string> {
   });
 }
 
-export async function getBrowserFingerprint() {
+async function getIpAddress(): Promise<string> {
+  try {
+    return fetch('https://api64.ipify.org')
+      .then((response) => {
+        if (!response.ok) {
+          return 'N/A';
+        }
+        return response.text();
+      });
+  } catch (error) {
+    return 'N/A';
+  }
+}
+
+export async function getBrowserFingerprint(ipAddress: boolean = false) {
   let userAgent = getUserAgent();
   let screenResolution = getScreenResolution();
   let timeZone = getTimeZone();
+  let online = getOnlineStatus;
   let language = getLanguage();
   let platform = getPlatform();
   let track = getDoNotTrackStatus();
@@ -154,7 +173,8 @@ export async function getBrowserFingerprint() {
   let canvas = await getCanvasFingerprint();
   let webgl = await getWebGLFingerprint();
   let audio = getAudioFingerprint();
-  let raw = `${userAgent}-${screenResolution}-${timeZone}-${language}-${platform}-${track}-${hardwareConcurrency}-${cookies}-${touch}-${plugins}-${fonts}-${canvas}-${webgl}-${audio}`;
-  let uniqueId = await computeSHA256(raw);
-  return uniqueId;
+  let ip = ipAddress ? `-${await getIpAddress()}` : "";
+  let raw = `${userAgent}-${screenResolution}-${timeZone}-${online}-${language}-${platform}-${track}-${hardwareConcurrency}-${cookies}-${touch}-${plugins}-${fonts}-${canvas}-${webgl}-${audio}${ip}`;
+  let fingerprint = await computeSha256(raw);
+  return fingerprint;
 }
