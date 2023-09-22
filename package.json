@@ -1,0 +1,27 @@
+{
+  "name": "@hamedstack/browserfingerprint",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./dist/browserfingerprint.umd.cjs",
+  "module": "./dist/browserfingerprint.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/browserfingerprint.js",
+      "require": "./dist/browserfingerprint.umd.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsc && vite build"
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@types/node": "^20.6.3",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.9",
+    "vite-plugin-dts": "^3.5.3"
+  }
+}
