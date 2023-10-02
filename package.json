@@ -1,6 +1,6 @@
 {
   "name": "@hamedstack/browserfingerprint",
-  "private": true,
+  "private": false,
   "version": "1.0.0",
   "type": "module",
   "main": "./dist/browserfingerprint.umd.cjs",
@@ -13,7 +13,8 @@
     }
   },
   "scripts": {
-    "build": "tsc && vite build"
+    "build": "tsc && vite build",
+	"release": "npm publish --access public"
   },
   "files": [
     "dist"
